@@ -4,6 +4,7 @@ const path = require('path');
 // Configuration
 const BOTS_DIR = path.join(__dirname, '..', 'bots', 'Free-Dbots');
 const BACKUP_DIR = path.join(__dirname, '..', 'bots', 'Free-Dbots-Backup');
+const BRAND_NAME = process.env.BRAND_NAME || 'Bit Traders';
 
 // Patterns to remove or replace
 const PATTERNS_TO_REMOVE = [
@@ -37,20 +38,115 @@ const PATTERNS_TO_REMOVE = [
     /FRUITFELLA/gi,
 ];
 
-// Portuguese to English translations
+// Portuguese to English translations (commonly seen in shared bots)
 const PORTUGUESE_TRANSLATIONS = {
+    // Clarity & professional instructions
     'Próxima condição Trade': 'Next Trade Condition',
     'Perda máxima aceita': 'Maximum Acceptable Loss',
     'Aposta inicial': 'Initial Stake',
     'Espectativa de Lucro': 'Profit Expectation',
+    'EXPECTATIVA DE LUCRO': 'PROFIT EXPECTATION',
     'Aposta ao vencer': 'Winning Stake',
     '💱SELECIONE A MOEDA': '💱SELECT CURRENCY',
+    'PARABÉNS TRADER': 'CONGRATULATIONS TRADER',
+    PARABÉNS: 'CONGRATULATIONS',
+    'Chega por Hoje': 'STOP TRADING TODAY',
+    'Chega por hoje': 'Stop Trading Today',
+    'Respeite sua Banca': 'Protect Your Bankroll',
+    'ATINGIU SUA META': 'REACHED YOUR TARGET',
+    'TOTAL DE PERDAS': 'TOTAL LOSSES',
+
+    // Counter & loss tracking clarity
+    'Contador-perdas': 'Loss Counter',
+    'Contador de perdas': 'Loss Counter',
+    'Quantas perdas antes do martingale': 'Losses Before Martingale',
+
+    // Victory/Loss clarity
+    Vitoria: 'Victory',
+    vitoria: 'victory',
+    Derrota: 'Loss',
+    derrota: 'loss',
+    Ganhou: 'Won',
+    Perdeu: 'Lost',
+
+    // Standard translations (preserved from before)
     SENHA: 'PASSWORD',
     'DIGITE A SENHA DO USUÁRIO': 'ENTER USER PASSWORD',
+    'DIGITE A PASSWORD DO USUÁRIO': 'ENTER USER PASSWORD',
     '📈META DE LUCRO': '📈PROFIT TARGET',
     '⛔MÁXIMO DE PERDAS': '⛔MAXIMUM LOSSES',
     'ROBO PROGRAMADO PARA OPERAÇÕES NO MERCADO FINANCEIRO': 'BOT PROGRAMMED FOR FINANCIAL MARKET OPERATIONS',
+    OPERAÇÕES: 'OPERATIONS',
     '⚠️ATENÇÃO⚠️': '⚠️ATTENTION⚠️',
+    'VALOR INICIAL': 'INITIAL AMOUNT',
+    'VALOR DO CONTRATO': 'CONTRACT AMOUNT',
+    'COPY VALOR DE CONTRATO': 'COPY CONTRACT AMOUNT',
+    'NUMERO DE EXECUÇÕES': 'NUMBER OF EXECUTIONS',
+    'LIMITE DE PERDAS': 'LOSS LIMIT',
+    MOEDA: 'CURRENCY',
+    'BB DESVIO': 'BB DEVIATION',
+    'BB PERÍODO': 'BB PERIOD',
+    'COMPRA EFETUADA': 'PURCHASE EXECUTED',
+    'CONTRATO MÍNIMO INICIAL': 'MINIMUM INITIAL CONTRACT',
+    'ROBO NÃO ACEITA VÍRGULA SOMENTE PONTO EXEMPLO 0.35': 'BOT DOES NOT ACCEPT COMMA, ONLY DOT e.g. 0.35',
+    'QUANTIDADE MÁXIMA DE PERDAS SEGUIDAS': 'MAXIMUM CONSECUTIVE LOSSES',
+    'OPERAÇÕES CONCLUIDAS': 'OPERATIONS COMPLETED',
+    'PERDEU TENTE NOVAMENTE MAIS TARDE': 'YOU LOST, TRY AGAIN LATER',
+    CALCULANDO: 'CALCULATING',
+    'ROBO ': 'BOT ',
+    'ROBÔ ': 'BOT ',
+    GRAFICOS: 'CHARTS',
+    OPERAÇÃO: 'OPERATION',
+    'ÍNDICE DE VOLATILIDADE 100': 'VOLATILITY INDEX 100',
+    'SUGESTÃO DE ENTRADA INICIAL': 'SUGGESTED INITIAL ENTRY',
+    'BOA SORTE': 'GOOD LUCK',
+    DOLAR: 'DOLLAR',
+    'TIPO DE NEGOCIAÇÃO CALL / PUT': 'TRADE TYPE CALL / PUT',
+    'O BOT FAZ UMA LEITURA DOS GRAFICOS ANTES DE EFETUAR A OPERAÇÃO PARA IDENTIFICAR QUAL O MELHOR MOMENTO DE AQUISIÇÃO':
+        'THE BOT ANALYZES THE CHARTS BEFORE EXECUTING TO IDENTIFY THE BEST ENTRY TIME',
+    'ANÁLISE EM EXECUÇÃO': 'ANALYSIS IN PROGRESS',
+    SEGURANÇA: 'SAFETY',
+    '"SELECIONE A CURRENCY"': '"SELECT CURRENCY"',
+    'DIGITE (1) PARA': 'ENTER (1) FOR',
+    'OU (2) PARA': 'OR (2) FOR',
+    CRIPTOMOEDA: 'CRYPTOCURRENCY',
+    CRIPTOCURRENCY: 'CRYPTOCURRENCY',
+    'PROFIT HAS BEN MADE': 'PROFIT HAS BEEN MADE',
+    'ROBO MKZ PREMIUM V5': 'MKZ PREMIUM BOT V5',
+    'Meta do Dia': 'Daily Target',
+    Meta: 'Target',
+    'Stake Inicial': 'Initial Stake',
+    'Seu Lucro': 'Your Profit',
+    'Mais bots no Canal Bot Binary Gratis': 'More bots available',
+    'Bot Criado por': 'Bot created by',
+    'VAMOS COMEÇAR': "LET'S START",
+};
+
+// Spanish to English translations (lightweight, common UI phrases)
+const SPANISH_TRANSLATIONS = {
+    'SELECCIONAR MONEDA': 'SELECT CURRENCY',
+    CONTRASEÑA: 'PASSWORD',
+    'INGRESE LA CONTRASEÑA': 'ENTER USER PASSWORD',
+    'META DE GANANCIA': 'PROFIT TARGET',
+    'PÉRDIDAS MÁXIMAS': 'MAXIMUM LOSSES',
+};
+
+// Indonesian to English translations (common UI phrases)
+const INDONESIAN_TRANSLATIONS = {
+    'PILIH MATA UANG': 'SELECT CURRENCY',
+    'KATA SANDI': 'PASSWORD',
+    'MASUKKAN KATA SANDI': 'ENTER USER PASSWORD',
+    'TARGET KEUNTUNGAN': 'PROFIT TARGET',
+    'KERUGIAN MAKSIMUM': 'MAXIMUM LOSSES',
+};
+
+// Russian to English (common UI phrases)
+const RUSSIAN_TRANSLATIONS = {
+    'ВЫБЕРИТЕ ВАЛЮТУ': 'SELECT CURRENCY',
+    ПАРОЛЬ: 'PASSWORD',
+    'ВВЕДИТЕ ПАРОЛЬ': 'ENTER USER PASSWORD',
+    'ЦЕЛЬ ПРИБЫЛИ': 'PROFIT TARGET',
+    'МАКСИМАЛЬНЫЕ ПОТЕРИ': 'MAXIMUM LOSSES',
 };
 
 // Phrases to completely remove
@@ -68,6 +164,42 @@ const PHRASES_TO_REMOVE = [
     /Join Our Telegram Channel[^<]*/gi,
 ];
 
+function applyDictionaryTranslations(text, dictionary) {
+    let result = text;
+    Object.entries(dictionary).forEach(([from, to]) => {
+        const regex = new RegExp(from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        result = result.replace(regex, to);
+    });
+    return result;
+}
+
+function ensureBrandedHeader(text) {
+    // Insert a branded XML comment once per file
+    const banner = `<!-- Cleaned and branded by ${BRAND_NAME} -->`;
+    if (text.includes(banner)) return text;
+
+    if (/<xml[^>]*>/i.test(text)) {
+        return text.replace(/<xml[^>]*>/i, match => `${match}\n    ${banner}`);
+    }
+    // Fallback: prefix banner
+    return `${banner}\n${text}`;
+}
+
+function brandDisplayText(content) {
+    // Append brand to visible TEXT fields conservatively
+    return content.replace(/(<field name="TEXT">)([^<]{3,200}?)(<\/field>)/gim, (m, p1, text, p3) => {
+        const current = text.trim();
+        if (!current) return m;
+        // Avoid duplicating brand or altering placeholders/code-like strings
+        if (new RegExp(`\\b${BRAND_NAME.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(current)) return m;
+        if (/[<>]/.test(current)) return m; // likely markup
+        if (/\{\{?|%s|%d|\$\{|\}\}/i.test(current)) return m; // templating tokens
+        if (/^[-+*/=<>\d\s.,:;()]+$/.test(current)) return m; // mostly symbols/numbers
+        const joined = `${current} • ${BRAND_NAME}`;
+        return `${p1}${joined}${p3}`;
+    });
+}
+
 function cleanXMLContent(content) {
     let cleanedContent = content;
 
@@ -81,11 +213,11 @@ function cleanXMLContent(content) {
         cleanedContent = cleanedContent.replace(pattern, '');
     });
 
-    // Translate Portuguese to English
-    Object.entries(PORTUGUESE_TRANSLATIONS).forEach(([portuguese, english]) => {
-        const regex = new RegExp(portuguese.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-        cleanedContent = cleanedContent.replace(regex, english);
-    });
+    // Translate common phrases to English using multiple dictionaries
+    cleanedContent = applyDictionaryTranslations(cleanedContent, PORTUGUESE_TRANSLATIONS);
+    cleanedContent = applyDictionaryTranslations(cleanedContent, SPANISH_TRANSLATIONS);
+    cleanedContent = applyDictionaryTranslations(cleanedContent, INDONESIAN_TRANSLATIONS);
+    cleanedContent = applyDictionaryTranslations(cleanedContent, RUSSIAN_TRANSLATIONS);
 
     // Clean up empty text blocks that may have been created
     cleanedContent = cleanedContent.replace(
@@ -100,7 +232,13 @@ function cleanXMLContent(content) {
         ''
     );
 
-    // Clean up double spaces and trim
+    // Brand visible text fields conservatively
+    cleanedContent = brandDisplayText(cleanedContent);
+
+    // Add branded header banner
+    cleanedContent = ensureBrandedHeader(cleanedContent);
+
+    // Clean up excessive spacing
     cleanedContent = cleanedContent.replace(/\s{2,}/g, ' ');
 
     return cleanedContent;
