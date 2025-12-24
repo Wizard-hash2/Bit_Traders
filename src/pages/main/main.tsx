@@ -20,8 +20,11 @@ import useTMB from '@/hooks/useTMB';
 import { handleOidcAuthFailure } from '@/utils/auth-utils';
 import {
     LabelPairedChartLineCaptionRegularIcon,
+    LabelPairedChartLineUpDownCaptionRegularIcon,
     LabelPairedObjectsColumnCaptionRegularIcon,
     LabelPairedPuzzlePieceTwoCaptionBoldIcon,
+    LabelPairedSquareListCaptionRegularIcon,
+    LabelPairedStarCaptionRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { LegacyGuide1pxIcon } from '@deriv/quill-icons/Legacy';
 import { requestOidcAuthentication } from '@deriv-com/auth-client';
@@ -35,6 +38,10 @@ import './main.scss';
 
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const Tutorial = lazy(() => import('../tutorials'));
+const DigitAnalyzerPage = lazy(() => import('../digit-analyzer'));
+const DigitPro = lazy(() => import('../digit-pro'));
+const DigitStatistics = lazy(() => import('../digit-statistics'));
+const BotsByBits = lazy(() => import('../bots-by-bits'));
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -66,7 +73,18 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'chart', 'tutorial'];
+    const hash = [
+        'dashboard',
+        'bot_builder',
+        'chart',
+        'tutorial',
+        'analyzer',
+        'digit_statistics',
+        'digit_pro',
+        'pro_bot',
+        'bots_by_bits',
+        'bot_library',
+    ];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -324,6 +342,76 @@ const AppWrapper = observer(() => {
                                     fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}
                                 >
                                     <ChartWrapper show_digits_stats={false} />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedChartLineCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Analyzer' />
+                                    </>
+                                }
+                                id='id-analyzer'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading digit analyzer...')} />}>
+                                    <DigitAnalyzerPage />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedChartLineUpDownCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Statistics' />
+                                    </>
+                                }
+                                id='id-digit-statistics'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading digit statistics...')} />}>
+                                    <DigitStatistics />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedStarCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Pro Digit' />
+                                    </>
+                                }
+                                id='id-digit-pro'
+                            >
+                                <Suspense
+                                    fallback={<ChunkLoader message={localize('Loading pro digit analysis...')} />}
+                                >
+                                    <DigitPro />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedSquareListCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Bots by Bits' />
+                                    </>
+                                }
+                                id='id-bots-by-bits'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading bots by bits...')} />}>
+                                    <BotsByBits />
                                 </Suspense>
                             </div>
                             <div

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useFirebaseCountriesConfig } from '@/hooks/firebase/useFirebaseCountriesConfig';
 import { useStore } from '@/hooks/useStore';
@@ -13,12 +13,10 @@ export const MenuItems = observer(() => {
     const { localize } = useTranslations();
     const { isDesktop } = useDevice();
     const store = useStore();
-    const { has_wallet = false } = useStoreWalletAccountsList() || {};
 
     if (!store) return null;
 
     const client = store.client ?? {};
-    const is_logged_in = client.is_logged_in ?? false;
     const getCurrency = client.getCurrency;
     const currency = getCurrency?.();
 
@@ -43,10 +41,10 @@ export const MenuItems = observer(() => {
         return redirect_url.toString();
     };
 
-    // Filter out the Cashier link when the account is a wallet account
-    const filtered_items = items.filter((item, index) => {
-        // Index 0 is the Cashier link
-        if (index === 0 && has_wallet) {
+    // Filter out the Cashier link (index 0) and Reports link (index 1)
+    const filtered_items = items.filter((_item, index) => {
+        // Index 0 is Cashier, index 1 is Reports - hide both
+        if (index === 0 || index === 1) {
             return false;
         }
         return true;
@@ -55,31 +53,30 @@ export const MenuItems = observer(() => {
     // TODO : need to add the skeleton loader when growthbook is not loaded
     return (
         <>
-            {is_logged_in &&
-                (isDesktop
-                    ? filtered_items.map(({ as, href, icon, label }) => (
-                          <MenuItem
-                              as={as}
-                              className='app-header__menu'
-                              href={getModifiedHref(href)}
-                              key={label}
-                              leftComponent={icon}
-                          >
-                              <Text>{localize(label)}</Text>
-                          </MenuItem>
-                      ))
-                    : // For mobile, show the first available item after filtering
-                      filtered_items.length > 0 && (
-                          <MenuItem
-                              as={filtered_items[0].as}
-                              className='flex gap-2 p-5'
-                              href={getModifiedHref(filtered_items[0].href)}
-                              key={filtered_items[0].label}
-                              leftComponent={filtered_items[0].icon}
-                          >
-                              <Text>{localize(filtered_items[0].label)}</Text>
-                          </MenuItem>
-                      ))}
+            {isDesktop
+                ? filtered_items.map(({ as, href, icon, label }) => (
+                      <MenuItem
+                          as={as}
+                          className='app-header__menu'
+                          href={getModifiedHref(href)}
+                          key={label}
+                          leftComponent={icon}
+                      >
+                          <Text>{localize(label)}</Text>
+                      </MenuItem>
+                  ))
+                : // For mobile, show the first available item after filtering
+                  filtered_items.length > 0 && (
+                      <MenuItem
+                          as={filtered_items[0].as}
+                          className='flex gap-2 p-5'
+                          href={getModifiedHref(filtered_items[0].href)}
+                          key={filtered_items[0].label}
+                          leftComponent={filtered_items[0].icon}
+                      >
+                          <Text>{localize(filtered_items[0].label)}</Text>
+                      </MenuItem>
+                  )}
         </>
     );
 });
@@ -117,7 +114,7 @@ export const TradershubLink = observer(() => {
     // Use the handleTraderHubRedirect function with the is_virtual flag
 
     // If the redirect_url_str is null, use the default URL with appropriate parameters
-    let href = redirect_url_str;
+    // let href = redirect_url_str;
     if (redirect_url_str) {
         // If we have a redirect_url_str, we still need to add the account parameter
         try {
@@ -129,22 +126,22 @@ export const TradershubLink = observer(() => {
                 // For real accounts, set the account parameter to the currency
                 redirect_url.searchParams.set('account', currency);
             }
-            href = redirect_url.toString();
+            // href = redirect_url.toString();
         } catch (error) {
             console.error('Error parsing redirect URL:', error);
         }
     }
 
     return (
-        <MenuItem
-            as='a'
+        <div
             className='app-header__menu'
-            href={href ?? undefined}
-            key={TRADERS_HUB_LINK_CONFIG.label}
-            leftComponent={TRADERS_HUB_LINK_CONFIG.icon}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px' }}
+            role='img'
+            aria-label={TRADERS_HUB_LINK_CONFIG.label}
         >
+            {TRADERS_HUB_LINK_CONFIG.icon}
             <Text>{TRADERS_HUB_LINK_CONFIG.label}</Text>
-        </MenuItem>
+        </div>
     );
 });
 

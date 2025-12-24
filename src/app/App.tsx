@@ -10,16 +10,23 @@ import { StoreProvider } from '@/hooks/useStore';
 import CallbackPage from '@/pages/callback';
 import Endpoint from '@/pages/endpoint';
 import { TAuthData } from '@/types/api-types';
+import { setAffiliateCookie } from '@/utils/referral-config';
 import { initializeI18n, localize, TranslationProvider } from '@deriv-com/translations';
 import CoreStoreProvider from './CoreStoreProvider';
 import './app-root.scss';
 
 const Layout = lazy(() => import('../components/layout'));
 const AppRoot = lazy(() => import('./app-root'));
+const DigitAnalyzerPage = lazy(() => import('../pages/digit-analyzer'));
 
 const { TRANSLATIONS_CDN_URL, R2_PROJECT_NAME, CROWDIN_BRANCH_NAME } = process.env;
+// Build CDN URL only when all parts are provided; otherwise rely on library defaults
+const cdnUrl =
+    TRANSLATIONS_CDN_URL && R2_PROJECT_NAME && CROWDIN_BRANCH_NAME
+        ? `${TRANSLATIONS_CDN_URL}/${R2_PROJECT_NAME}/${CROWDIN_BRANCH_NAME}`
+        : undefined;
 const i18nInstance = initializeI18n({
-    cdnUrl: `${TRANSLATIONS_CDN_URL}/${R2_PROJECT_NAME}/${CROWDIN_BRANCH_NAME}`,
+    ...(cdnUrl ? { cdnUrl } : {}),
 });
 
 // Simple Suspense wrapper without timeout that causes dark landing page
@@ -53,6 +60,7 @@ const router = createBrowserRouter(
         >
             {/* All child routes will be passed as children to Layout */}
             <Route index element={<AppRoot />} />
+            <Route path='digit-analyzer' element={<DigitAnalyzerPage />} />
             <Route path='endpoint' element={<Endpoint />} />
             <Route path='callback' element={<CallbackPage />} />
         </Route>
@@ -61,6 +69,9 @@ const router = createBrowserRouter(
 
 function App() {
     React.useEffect(() => {
+        // Initialize affiliate tracking for Deriv referral program
+        setAffiliateCookie();
+
         // Use the invalid token handler hook to automatically retrigger OIDC authentication
         // when an invalid token is detected and the cookie logged state is true
 

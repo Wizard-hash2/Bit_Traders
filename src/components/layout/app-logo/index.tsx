@@ -1,5 +1,4 @@
-import { standalone_routes } from '@/components/shared';
-import { DerivLogo, useDevice } from '@deriv-com/ui';
+import { useDevice } from '@deriv-com/ui';
 import './app-logo.scss';
 
 export const AppLogo = () => {
@@ -7,6 +6,8 @@ export const AppLogo = () => {
 
     if (!isDesktop) return null;
     return (
-        <DerivLogo className='app-header__logo' href={standalone_routes.deriv_com} target='_blank' variant='wallets' />
+        <div className='app-header__logo' role='img' aria-label='Bit Traders'>
+            <img src='/BITTRADERS.png' alt='Bit Traders' style={{ height: 48 }} />
+        </div>
     );
 };

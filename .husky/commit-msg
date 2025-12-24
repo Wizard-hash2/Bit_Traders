@@ -1,4 +1,12 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx --no -- commitlint --edit 
+# Allow skipping commitlint when COMMITLINT_DISABLE is set
+if [ -z "$COMMITLINT_DISABLE" ]; then
+	npx --no -- commitlint --edit || {
+		echo "commitlint failed. Use a Conventional Commit message (e.g., 'chore: update ...').";
+		exit 1;
+	}
+else
+	echo "commitlint skipped because COMMITLINT_DISABLE is set.";
+fi

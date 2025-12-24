@@ -1,0 +1,38 @@
+[
+  {
+    "id": "shash-digits",
+    "name": "SHASH Digits v4-20",
+    "description": "SHASH digit trading strategy version 4-20",
+    "category": "Digits",
+    "difficulty": "Intermediate",
+    "fileUrl": "/bots/Free-Dbots/SHASH DIGITS V- 4-20.xml",
+    "tags": ["digit", "shash", "strategy"]
+  },
+  {
+    "id": "digit-over-2",
+    "name": "1 Tick Digit Over 2",
+    "description": "Simple digit over strategy for 1 tick trades",
+    "category": "Digits",
+    "difficulty": "Beginner",
+    "fileUrl": "/bots/Free-Dbots/1 tick DIgit Over 2.xml",
+    "tags": ["digit", "over", "1-tick", "beginner"]
+  },
+  {
+    "id": "mkz-rf-premium",
+    "name": "MKZ RF Premium Bot",
+    "description": "Premium Rise/Fall strategy with advanced indicators",
+    "category": "Rise/Fall",
+    "difficulty": "Advanced",
+    "fileUrl": "/bots/Free-Dbots/24-MKZ RF PREMIUM BOT.xml",
+    "tags": ["rise", "fall", "premium", "indicators"]
+  },
+  {
+    "id": "iso-touch",
+    "name": "Iso Touch Auto Bot v2.0.1",
+    "description": "Isolated touch trading with automation",
+    "category": "Touch",
+    "difficulty": "Intermediate",
+    "fileUrl": "/bots/Free-Dbots/iso_Touch AutoBot V2.0.1.xml",
+    "tags": ["touch", "iso", "auto"]
+  }
+]

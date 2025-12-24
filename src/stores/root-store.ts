@@ -10,6 +10,7 @@ import FlyoutStore from './flyout-store';
 import GoogleDriveStore from './google-drive-store';
 import JournalStore from './journal-store';
 import LoadModalStore from './load-modal-store';
+import ProBotStore from './pro-bot-store';
 import QuickStrategyStore from './quick-strategy-store';
 import RunPanelStore from './run-panel-store';
 import SaveModalStore from './save-modal-store';
@@ -38,6 +39,7 @@ export default class RootStore {
     public quick_strategy: QuickStrategyStore;
     public self_exclusion: SelfExclusionStore;
     public dashboard: DashboardStore;
+    public pro_bot: ProBotStore;
 
     public chart_store: ChartStore;
     public blockly_store: BlocklyStore;
@@ -79,6 +81,7 @@ export default class RootStore {
         this.quick_strategy = new QuickStrategyStore(this);
         this.self_exclusion = new SelfExclusionStore(this, this.core);
         this.dashboard = new DashboardStore(this, this.core);
+        this.pro_bot = new ProBotStore(this);
 
         // need to be at last for dependency
         this.chart_store = new ChartStore(this);

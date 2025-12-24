@@ -11,17 +11,16 @@ import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
 import { clearAuthData, handleOidcAuthFailure } from '@/utils/auth-utils';
-import { StandaloneCircleUserRegularIcon } from '@deriv/quill-icons/Standalone';
+import { addReferralTracking } from '@/utils/referral-config';
 import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import { Localize, useTranslations } from '@deriv-com/translations';
 import { Header, useDevice, Wrapper } from '@deriv-com/ui';
-import { Tooltip } from '@deriv-com/ui';
 import { AppLogo } from '../app-logo';
 import AccountsInfoLoader from './account-info-loader';
 import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
-import PlatformSwitcher from './platform-switcher';
+// PlatformSwitcher intentionally not imported to keep header icon non-interactive
 import './header.scss';
 
 type TAppHeaderProps = {
@@ -29,7 +28,8 @@ type TAppHeaderProps = {
 };
 
 const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
-    const { isDesktop } = useDevice();
+    const { isDesktop, isTablet } = useDevice();
+    const showExpandedHeader = isDesktop || isTablet;
     const { isAuthorizing, activeLoginid } = useApiBase();
     const { client } = useStore() ?? {};
 
@@ -50,13 +50,13 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     const renderAccountSection = useCallback(() => {
         // Show loader during authentication processes
         if (isAuthenticating || isAuthorizing || (isSingleLoggingIn && !is_tmb_enabled)) {
-            return <AccountsInfoLoader isLoggedIn isMobile={!isDesktop} speed={3} />;
+            return <AccountsInfoLoader isLoggedIn isMobile={!showExpandedHeader} speed={3} />;
         } else if (activeLoginid) {
             return (
                 <>
                     {/* <CustomNotifications /> */}
 
-                    {isDesktop &&
+                    {showExpandedHeader &&
                         (has_wallet ? (
                             <Button
                                 className='manage-funds-button'
@@ -96,40 +96,6 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                         ))}
 
                     <AccountSwitcher activeAccount={activeAccount} />
-
-                    {isDesktop &&
-                        (() => {
-                            let redirect_url = new URL(standalone_routes.personal_details);
-                            const is_hub_enabled_country = hubEnabledCountryList.includes(client?.residence || '');
-
-                            if (has_wallet && is_hub_enabled_country) {
-                                redirect_url = new URL(standalone_routes.account_settings);
-                            }
-                            // Check if the account is a demo account
-                            // Use the URL parameter to determine if it's a demo account, as this will update when the account changes
-                            const urlParams = new URLSearchParams(window.location.search);
-                            const account_param = urlParams.get('account');
-                            const is_virtual = client?.is_virtual || account_param === 'demo';
-
-                            if (is_virtual) {
-                                // For demo accounts, set the account parameter to 'demo'
-                                redirect_url.searchParams.set('account', 'demo');
-                            } else if (currency) {
-                                // For real accounts, set the account parameter to the currency
-                                redirect_url.searchParams.set('account', currency);
-                            }
-                            return (
-                                <Tooltip
-                                    as='a'
-                                    href={redirect_url.toString()}
-                                    tooltipContent={localize('Manage account settings')}
-                                    tooltipPosition='bottom'
-                                    className='app-header__account-settings'
-                                >
-                                    <StandaloneCircleUserRegularIcon className='app-header__profile_icon' />
-                                </Tooltip>
-                            );
-                        })()}
                 </>
             );
         } else {
@@ -179,7 +145,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                     <Button
                         primary
                         onClick={() => {
-                            window.open(standalone_routes.signup);
+                            window.open(addReferralTracking(standalone_routes.signup));
                         }}
                     >
                         <Localize i18n_default_text='Sign up' />
@@ -191,7 +157,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         isAuthenticating,
         isAuthorizing,
         isSingleLoggingIn,
-        isDesktop,
+        showExpandedHeader,
         activeLoginid,
         standalone_routes,
         client,
@@ -208,21 +174,41 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     return (
         <Header
             className={clsx('app-header', {
-                'app-header--desktop': isDesktop,
-                'app-header--mobile': !isDesktop,
+                'app-header--desktop': showExpandedHeader,
+                'app-header--mobile': !showExpandedHeader,
             })}
         >
             <Wrapper variant='left'>
                 <AppLogo />
                 <MobileMenu />
-                {isDesktop && <MenuItems.TradershubLink />}
-                {isDesktop && <MenuItems />}
-                {isDesktop && <PlatformSwitcher />}
+                {showExpandedHeader && <MenuItems.TradershubLink />}
+                {showExpandedHeader && <MenuItems />}
+                {showExpandedHeader && (
+                    <div
+                        className='app-header__platform'
+                        role='img'
+                        aria-label='Bit Traders'
+                        style={{ marginLeft: 12 }}
+                    >
+                        <img src='/BITTRADERS.png' alt='Bit Traders' style={{ height: 44 }} />
+                    </div>
+                )}
             </Wrapper>
+
             <Wrapper variant='right'>
-                {!isDesktop && <PWAInstallButton variant='primary' size='medium' />}
+                <div
+                    className='app-header__brand'
+                    style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                    role='img'
+                    aria-label='Bit Traders'
+                >
+                    <img src='/BITTRADERS.png' alt='Bit Traders' style={{ height: 28 }} />
+                    <span>Bit Traders</span>
+                </div>
+                {!showExpandedHeader && <PWAInstallButton variant='primary' size='medium' />}
                 {renderAccountSection()}
             </Wrapper>
+
             {/* <PWAInstallModalTest /> */}
         </Header>
     );
